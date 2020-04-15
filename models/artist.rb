@@ -30,7 +30,7 @@ class Artist
     sql = "
     UPDATE artists SET (
       name
-    ) =
+    ) = row
     (
       $1
     )
