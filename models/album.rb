@@ -1,8 +1,10 @@
 require("pg")
 require_relative("../db/sql_runner")
 require_relative("artist")
+
 class Album
-  attr_reader :id, :title, :genre, :artist_id
+  attr_accessor :title, :genre, :artist_id
+  attr_reader :id
 
   def initialize(options)
     @id = options["id"].to_i if options["id"]
@@ -40,6 +42,21 @@ class Album
     values = [id]
     album_hash = SqlRunner.run(sql, values).first()
     return Album.new(album_hash) if album_hash
+  end
+
+  def update()
+    sql = "
+    UPDATE albums SET (
+      title,
+      genre,
+      artist_id
+    ) =
+    (
+      $1, $2, $3
+    )
+    WHERE id = $4"
+    values = [@title, @genre, @artist_id, @id]
+    SqlRunner.run(sql, values)
   end
 
   # Delete All

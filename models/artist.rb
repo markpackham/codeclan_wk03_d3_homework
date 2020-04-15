@@ -1,8 +1,10 @@
 require("pg")
 require_relative("../db/sql_runner")
 require_relative("album")
+
 class Artist
-  attr_reader :id, :name
+    attr_accessor :name
+    attr_reader :id
 
   def initialize(options)
     @id = options["id"].to_i if options["id"]
@@ -21,6 +23,20 @@ class Artist
     RETURNING id"
     values = [@name]
     @id = SqlRunner.run(sql, values)[0]["id"].to_i
+  end
+
+  # Update
+  def update()
+    sql = "
+    UPDATE artists SET (
+      name
+    ) =
+    (
+      $1
+    )
+    WHERE id = $2"
+    values = [@name, @id]
+    SqlRunner.run(sql, values)
   end
 
   # Read All
@@ -51,5 +67,4 @@ class Artist
     albums = results.map { |album_data| Album.new(album_data) }
     return albums
   end
-
 end
